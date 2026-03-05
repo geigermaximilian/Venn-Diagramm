@@ -447,6 +447,10 @@ function setupKeyboardShortcuts() {
 
 function setupManualCanvas() {
   manualCanvas.addEventListener("click", (event) => {
+    if (state.layoutEditEnabled) {
+      return;
+    }
+
     if (Date.now() < state.justDraggedUntil) {
       return;
     }
