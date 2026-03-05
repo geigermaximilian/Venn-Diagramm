@@ -25,6 +25,7 @@ const vennCanvas = document.getElementById("vennCanvas");
 const vennCtx = vennCanvas.getContext("2d");
 const manualCanvas = document.getElementById("manualCanvas");
 const manualCtx = manualCanvas.getContext("2d");
+const errorOverlayImage = document.getElementById("errorOverlayImage");
 
 const mainTabs = Array.from(document.querySelectorAll(".main-tab"));
 const modePanels = {
@@ -504,6 +505,7 @@ function updateFromTermInput() {
   const source = exprInput.value.trim();
   if (!source) {
     errorBox.textContent = "";
+    setErrorOverlayVisible(false);
     drawEmpty(vennCtx, vennCanvas, "Gib links einen Mengenterm ein.");
     setCountEl.textContent = "Mengen: 0";
     universeInfoEl.textContent = "Grundmenge: –";
@@ -524,11 +526,18 @@ function updateFromTermInput() {
     universeInfoEl.textContent = universe ? `Grundmenge: ${universe}` : "Grundmenge: keine";
 
     drawTermDiagram(ast, visibleSets, universe);
+    setErrorOverlayVisible(false);
     errorBox.textContent = "";
   } catch (error) {
     drawEmpty(vennCtx, vennCanvas, "Term konnte nicht gezeichnet werden.");
+    setErrorOverlayVisible(true);
     errorBox.textContent = `Fehler im Term: ${error.message}`;
   }
+}
+
+function setErrorOverlayVisible(visible) {
+  if (!errorOverlayImage) return;
+  errorOverlayImage.classList.toggle("visible", visible);
 }
 
 function detectUniverse(ast, setNames) {

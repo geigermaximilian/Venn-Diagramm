@@ -479,6 +479,20 @@ textarea {
   min-height: 540px;
 }
 
+.error-overlay-image {
+  position: absolute;
+  z-index: 4;
+  max-width: min(72%, 520px);
+  max-height: 72%;
+  object-fit: contain;
+  display: none;
+  pointer-events: none;
+}
+
+.error-overlay-image.visible {
+  display: block;
+}
+
 .layout-tools {
   position: absolute;
   top: 10px;
