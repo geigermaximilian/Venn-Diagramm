@@ -20,6 +20,7 @@ const infoToggle = document.getElementById("infoToggle");
 const infoPopup = document.getElementById("infoPopup");
 const layoutEditToggle = document.getElementById("layoutEditToggle");
 const layoutReset = document.getElementById("layoutReset");
+const diagramPanel = document.querySelector(".diagram-panel");
 
 const vennCanvas = document.getElementById("vennCanvas");
 const vennCtx = vennCanvas.getContext("2d");
@@ -71,6 +72,7 @@ const state = {
   manualLayouts: {},
   layoutEditEnabled: false,
   dragInfo: null,
+  justDraggedUntil: 0,
 };
 
 initTheme();
@@ -235,6 +237,7 @@ function switchMode(mode) {
   document.getElementById("canvas-manual-wrap").classList.toggle("active", mode === "manual");
 
   if (mode === "manual") {
+    setErrorOverlayVisible(false);
     drawManualDiagram();
   } else {
     updateFromTermInput();
@@ -313,6 +316,7 @@ function setupDragForCanvas(canvasEl, mode) {
       shapeName: best.name,
       offsetX: best.cx - coords.x,
       offsetY: best.cy - coords.y,
+      moved: false,
     };
     event.preventDefault();
   });
@@ -334,6 +338,7 @@ function setupDragForCanvas(canvasEl, mode) {
     const nextCy = clamp(coords.y + drag.offsetY, bounds.y + shape.r, bounds.y + bounds.height - shape.r);
     shape.cx = nextCx;
     shape.cy = nextCy;
+    drag.moved = true;
 
     saveLayoutPosition(mode, setNames, shape);
 
@@ -346,6 +351,9 @@ function setupDragForCanvas(canvasEl, mode) {
 
   canvasEl.addEventListener("pointerup", (event) => {
     if (state.dragInfo && state.dragInfo.pointerId === event.pointerId) {
+      if (state.dragInfo.moved) {
+        state.justDraggedUntil = Date.now() + 180;
+      }
       state.dragInfo = null;
     }
   });
@@ -439,7 +447,7 @@ function setupKeyboardShortcuts() {
 
 function setupManualCanvas() {
   manualCanvas.addEventListener("click", (event) => {
-    if (state.layoutEditEnabled) {
+    if (Date.now() < state.justDraggedUntil) {
       return;
     }
 
@@ -537,7 +545,17 @@ function updateFromTermInput() {
 
 function setErrorOverlayVisible(visible) {
   if (!errorOverlayImage) return;
-  errorOverlayImage.classList.toggle("visible", visible);
+
+  const shouldShow = visible && state.mode !== "manual";
+  errorOverlayImage.classList.toggle("visible", shouldShow);
+
+  if (canvasWraps.term) {
+    canvasWraps.term.classList.toggle("hidden-by-error", shouldShow);
+  }
+
+  if (diagramPanel) {
+    diagramPanel.classList.toggle("error-active", shouldShow);
+  }
 }
 
 function detectUniverse(ast, setNames) {

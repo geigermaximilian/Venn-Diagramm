@@ -493,6 +493,14 @@ textarea {
   display: block;
 }
 
+.canvas-wrap.hidden-by-error {
+  display: none !important;
+}
+
+.diagram-panel.error-active .layout-tools {
+  display: none;
+}
+
 .layout-tools {
   position: absolute;
   top: 10px;
