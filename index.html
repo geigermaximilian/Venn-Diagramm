@@ -11,11 +11,28 @@
       <div class="header-left">
         <span class="header-title">Venn-Diagramm</span>
       </div>
-      <div class="main-tabs" role="tablist" aria-label="Haupt-Reiter">
-        <button class="main-tab active" data-mode="term" role="tab" aria-selected="true">Term → Diagramm</button>
-        <button class="main-tab" data-mode="manual" role="tab" aria-selected="false">Diagramm → Term</button>
-        <button class="main-tab" data-mode="tasks" role="tab" aria-selected="false">Aufgaben</button>
+
+      <button
+        id="menuToggle"
+        class="menu-toggle"
+        type="button"
+        aria-label="Navigation öffnen"
+        aria-controls="headerTabs"
+        aria-expanded="false"
+      >
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <div id="headerTabs" class="header-tabs-wrap">
+        <div class="main-tabs" role="tablist" aria-label="Haupt-Reiter">
+          <button class="main-tab active" data-mode="term" role="tab" aria-selected="true">Term → Diagramm</button>
+          <button class="main-tab" data-mode="manual" role="tab" aria-selected="false">Diagramm → Term</button>
+          <button class="main-tab" data-mode="tasks" role="tab" aria-selected="false">Aufgaben</button>
+        </div>
       </div>
+
       <button id="themeToggle" class="theme-toggle" type="button" aria-label="Dark/Light Mode umschalten" title="Dark/Light Mode">
         <span class="icon sun" aria-hidden="true">☀️</span>
         <span class="icon moon" aria-hidden="true">🌙</span>
@@ -41,7 +58,7 @@
           </div>
 
           <label for="exprInput" class="label">Mengenterm</label>
-          <textarea id="exprInput" spellcheck="false">B ∩ C ∩ (M - A)</textarea>
+          <textarea id="exprInput" spellcheck="false"></textarea>
 
           <div class="meta-row">
             <span class="chip" id="setCount">Mengen: 0</span>
@@ -120,7 +137,7 @@
           <p id="taskParseInfo" class="hint small"></p>
 
           <label class="label" for="taskTerm">Aktueller Aufgaben-Term</label>
-          <textarea id="taskTerm" readonly>–</textarea>
+          <textarea id="taskTerm" readonly></textarea>
           <p class="hint small">Der erzeugte Term wird automatisch im Diagramm rechts dargestellt.</p>
         </div>
       </section>

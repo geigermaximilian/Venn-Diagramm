@@ -14,6 +14,8 @@ const taskParseInfoEl = document.getElementById("taskParseInfo");
 const taskTermEl = document.getElementById("taskTerm");
 
 const themeToggle = document.getElementById("themeToggle");
+const menuToggle = document.getElementById("menuToggle");
+const headerTabs = document.getElementById("headerTabs");
 
 const vennCanvas = document.getElementById("vennCanvas");
 const vennCtx = vennCanvas.getContext("2d");
@@ -60,6 +62,7 @@ const state = {
 
 initTheme();
 setupThemeToggle();
+setupMobileMenu();
 setupMainTabs();
 setupSymbolTabs();
 setupSymbolButtons();
@@ -73,6 +76,7 @@ exprInput.addEventListener("input", () => {
   updateFromTermInput();
 });
 window.addEventListener("resize", () => {
+  syncMobileMenuState();
   updateFromTermInput();
   drawManualDiagram();
 });
@@ -106,7 +110,36 @@ function setupMainTabs() {
   for (const button of mainTabs) {
     button.addEventListener("click", () => {
       switchMode(button.dataset.mode);
+      closeMobileMenu();
     });
+  }
+}
+
+function setupMobileMenu() {
+  if (!menuToggle || !headerTabs) return;
+
+  menuToggle.addEventListener("click", () => {
+    const isOpen = headerTabs.classList.toggle("open");
+    menuToggle.classList.toggle("active", isOpen);
+    menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  syncMobileMenuState();
+}
+
+function closeMobileMenu() {
+  if (!menuToggle || !headerTabs) return;
+  headerTabs.classList.remove("open");
+  menuToggle.classList.remove("active");
+  menuToggle.setAttribute("aria-expanded", "false");
+}
+
+function syncMobileMenuState() {
+  if (!menuToggle || !headerTabs) return;
+  if (window.innerWidth > 980) {
+    headerTabs.classList.remove("open");
+    menuToggle.classList.remove("active");
+    menuToggle.setAttribute("aria-expanded", "false");
   }
 }
 

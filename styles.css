@@ -39,7 +39,7 @@ body {
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
@@ -56,6 +56,44 @@ body {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--muted);
+}
+
+.menu-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-direction: column;
+}
+
+.menu-toggle .bar {
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.24s ease, opacity 0.24s ease;
+}
+
+.menu-toggle.active .bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.header-tabs-wrap {
+  min-width: 0;
 }
 
 .app {
@@ -375,6 +413,7 @@ textarea {
   align-items: center;
   justify-content: center;
   position: relative;
+  min-height: 540px;
 }
 
 .canvas-wrap {
@@ -414,20 +453,48 @@ canvas {
 
 @media (max-width: 980px) {
   .app-header {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     grid-template-areas:
-      "title toggle"
-      "tabs tabs";
-    row-gap: 10px;
+      "title menu toggle"
+      "tabs tabs tabs";
+    row-gap: 8px;
   }
 
   .header-left {
     grid-area: title;
   }
 
-  .main-tabs {
+  .menu-toggle {
+    display: inline-flex;
+    grid-area: menu;
+    justify-self: end;
+  }
+
+  .header-tabs-wrap {
     grid-area: tabs;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: max-height 0.28s ease, opacity 0.24s ease, transform 0.24s ease;
+  }
+
+  .header-tabs-wrap.open {
+    max-height: 140px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .main-tabs {
     justify-content: flex-start;
+    padding-top: 6px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .main-tab {
+    width: 100%;
+    text-align: left;
   }
 
   .theme-toggle {
@@ -438,6 +505,31 @@ canvas {
   .app {
     grid-template-columns: 1fr;
     min-height: auto;
+    padding: 10px;
+  }
+
+  .diagram-panel {
+    order: 1;
+    position: sticky;
+    top: 78px;
+    z-index: 10;
+    min-height: 44vh;
+    max-height: 48vh;
+    padding: 8px;
+  }
+
+  .input-panel {
+    order: 2;
+  }
+
+  .canvas-wrap {
+    min-height: 100%;
+  }
+
+  canvas {
+    max-height: calc(48vh - 26px);
+    width: 100%;
+    height: auto;
   }
 
   .panel {
