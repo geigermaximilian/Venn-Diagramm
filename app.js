@@ -99,10 +99,15 @@ function setupThemeToggle() {
   themeToggle.addEventListener("click", () => {
     const current = document.documentElement.getAttribute("data-theme") || "light";
     const next = current === "dark" ? "light" : "dark";
+
+    // Apply theme instantly; redraw canvases in the next frame to avoid click lag.
     document.documentElement.setAttribute("data-theme", next);
     localStorage.setItem("theme", next);
-    updateFromTermInput();
-    drawManualDiagram();
+
+    requestAnimationFrame(() => {
+      updateFromTermInput();
+      drawManualDiagram();
+    });
   });
 }
 
@@ -122,6 +127,20 @@ function setupMobileMenu() {
     const isOpen = headerTabs.classList.toggle("open");
     menuToggle.classList.toggle("active", isOpen);
     menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  document.addEventListener("click", (event) => {
+    if (window.innerWidth > 980) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (menuToggle.contains(target) || headerTabs.contains(target)) return;
+    closeMobileMenu();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMobileMenu();
+    }
   });
 
   syncMobileMenuState();
