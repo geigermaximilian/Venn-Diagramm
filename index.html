@@ -39,45 +39,43 @@
       </button>
     </header>
 
-    <section class="panel quick-term-panel">
-      <div class="quick-term-head">
-        <label for="exprInput" class="label">Mengenterm</label>
-        <button id="infoToggle" class="info-toggle" type="button" aria-label="Hinweise anzeigen" title="Hinweise">i</button>
-      </div>
-
-      <div id="infoPopup" class="info-popup" role="dialog" aria-modal="false" aria-label="Hinweise">
-        <p class="hint">Kurz-Hinweise</p>
-        <p class="hint small">`s -> ∩`, `v -> ∪`, `k -> '`, `d -> -`, `y -> △`</p>
-        <p class="hint small">Großbuchstaben (A,B,C,...) sind Mengen.</p>
-      </div>
-
-      <div class="quick-term-row">
-        <textarea id="exprInput" class="quick-input" spellcheck="false" placeholder="z. B. (A∩B)∪C'"></textarea>
-        <div class="quick-ops" aria-label="Operatoren">
-          <button class="symbol" data-insert="∪">∪</button>
-          <button class="symbol" data-insert="∩">∩</button>
-          <button class="symbol" data-insert="-">-</button>
-          <button class="symbol" data-insert="△">△</button>
-          <button class="symbol" data-insert="'">'</button>
-          <button class="symbol" data-insert="(">(</button>
-          <button class="symbol" data-insert=")">)</button>
-        </div>
-      </div>
-
-      <div class="meta-row quick-meta-row">
-        <span class="chip" id="setCount">Mengen: 0</span>
-        <span class="chip" id="universeInfo">Grundmenge: –</span>
-      </div>
-      <p id="error" class="error"></p>
-    </section>
-
     <main class="app">
       <section class="panel input-panel">
         <h1>Mengenlehre → Venn-Diagramm</h1>
         <p class="subtitle">Wähle oben einen Modus und arbeite interaktiv mit Mengen.</p>
 
         <div class="mode-panel active" id="mode-term" role="tabpanel">
-          <p class="hint">Term-Eingabe und Operatoren sind jetzt direkt oben unter dem Header.</p>
+          <div class="quick-term-panel">
+            <div class="quick-term-head">
+              <label for="exprInput" class="label">Mengenterm</label>
+              <button id="infoToggle" class="info-toggle" type="button" aria-label="Hinweise anzeigen" title="Hinweise">i</button>
+            </div>
+
+            <div id="infoPopup" class="info-popup" role="dialog" aria-modal="false" aria-label="Hinweise">
+              <p class="hint">Kurz-Hinweise</p>
+              <p class="hint small">`s -> ∩`, `v -> ∪`, `k -> '`, `d -> -`, `y -> △`</p>
+              <p class="hint small">Großbuchstaben (A,B,C,...) sind Mengen.</p>
+            </div>
+
+            <div class="quick-term-row">
+              <textarea id="exprInput" class="quick-input" spellcheck="false" placeholder="z. B. (A∩B)∪C'"></textarea>
+              <div class="quick-ops" aria-label="Operatoren">
+                <button class="symbol" data-insert="∪">∪</button>
+                <button class="symbol" data-insert="∩">∩</button>
+                <button class="symbol" data-insert="-">-</button>
+                <button class="symbol" data-insert="△">△</button>
+                <button class="symbol" data-insert="'">'</button>
+                <button class="symbol" data-insert="(">(</button>
+                <button class="symbol" data-insert=")">)</button>
+              </div>
+            </div>
+
+            <div class="meta-row quick-meta-row">
+              <span class="chip" id="setCount">Mengen: 0</span>
+              <span class="chip" id="universeInfo">Grundmenge: –</span>
+            </div>
+            <p id="error" class="error"></p>
+          </div>
         </div>
 
         <div class="mode-panel" id="mode-manual" role="tabpanel">

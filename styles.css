@@ -113,8 +113,8 @@ body {
   transition: background-color 0.28s ease, border-color 0.28s ease;
 }
 .quick-term-panel {
-  margin: 10px 16px 0;
-  padding: 12px;
+  margin: 0;
+  padding: 0;
 }
 .quick-term-head {
   display: flex;
@@ -565,24 +565,29 @@ canvas {
     gap: 10px;
   }
 
-  .quick-term-panel {
-    margin: 8px 10px 0;
-    padding: 10px;
-  }
-
   .quick-term-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) 62px;
     gap: 8px;
   }
 
   .quick-ops {
-    grid-template-columns: repeat(7, minmax(40px, 1fr));
-    overflow-x: auto;
-    padding-bottom: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: visible;
+    padding-bottom: 0;
   }
 
   .quick-ops .symbol {
-    min-width: 42px;
+    min-width: 54px;
+    min-height: 44px;
+    font-size: 1.05rem;
+    padding: 0;
+  }
+
+  .info-toggle,
+  .info-popup {
+    display: none !important;
   }
 
   .diagram-panel {
