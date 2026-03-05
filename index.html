@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Venn-Diagramm Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-left">
+        <span class="header-title">Venn-Diagramm</span>
+      </div>
+      <div class="main-tabs" role="tablist" aria-label="Haupt-Reiter">
+        <button class="main-tab active" data-mode="term" role="tab" aria-selected="true">Term → Diagramm</button>
+        <button class="main-tab" data-mode="manual" role="tab" aria-selected="false">Diagramm → Term</button>
+        <button class="main-tab" data-mode="tasks" role="tab" aria-selected="false">Aufgaben</button>
+      </div>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Dark/Light Mode umschalten" title="Dark/Light Mode">
+        <span class="icon sun" aria-hidden="true">☀️</span>
+        <span class="icon moon" aria-hidden="true">🌙</span>
+      </button>
+    </header>
+
+    <main class="app">
+      <section class="panel input-panel">
+        <h1>Mengenlehre → Venn-Diagramm</h1>
+        <p class="subtitle">Wähle oben einen Modus und arbeite interaktiv mit Mengen.</p>
+
+        <div class="mode-panel active" id="mode-term" role="tabpanel">
+          <div class="hotkey-box">
+            <div class="hotkey-title">Tastatur-Kürzel</div>
+            <div class="hotkeys">
+              <span class="key-chip">s → ∩</span>
+              <span class="key-chip">v → ∪</span>
+              <span class="key-chip">k → '</span>
+              <span class="key-chip">d → -</span>
+              <span class="key-chip">y → △</span>
+              <span class="key-chip">Großbuchstaben (A, B, S …) = Mengen</span>
+            </div>
+          </div>
+
+          <label for="exprInput" class="label">Mengenterm</label>
+          <textarea id="exprInput" spellcheck="false">B ∩ C ∩ (M - A)</textarea>
+
+          <div class="meta-row">
+            <span class="chip" id="setCount">Mengen: 0</span>
+            <span class="chip" id="universeInfo">Grundmenge: –</span>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Symbol-Reiter">
+            <button class="tab-btn active" data-tab="ops" role="tab" aria-selected="true">Operatoren</button>
+            <button class="tab-btn" data-tab="brackets" role="tab" aria-selected="false">Klammern</button>
+            <button class="tab-btn" data-tab="special" role="tab" aria-selected="false">Spezial</button>
+          </div>
+
+          <div class="tab-panels">
+            <div class="tab-panel active" id="tab-ops" role="tabpanel">
+              <button class="symbol" data-insert=" ∪ ">∪ Vereinigung</button>
+              <button class="symbol" data-insert=" ∩ ">∩ Schnittmenge</button>
+              <button class="symbol" data-insert=" - ">- Differenz</button>
+              <button class="symbol" data-insert=" △ ">△ Symmetrische Differenz</button>
+            </div>
+            <div class="tab-panel" id="tab-brackets" role="tabpanel">
+              <button class="symbol" data-insert="(  )">( )</button>
+              <button class="symbol" data-insert="{  }">{ }</button>
+            </div>
+            <div class="tab-panel" id="tab-special" role="tabpanel">
+              <button class="symbol" data-insert="'">' Komplement</button>
+              <button class="symbol" data-insert="M">M (Grundmenge)</button>
+              <button class="symbol" data-insert="A">A</button>
+              <button class="symbol" data-insert="B">B</button>
+              <button class="symbol" data-insert="C">C</button>
+              <button class="symbol" data-insert="S">S</button>
+            </div>
+          </div>
+
+          <p id="error" class="error"></p>
+        </div>
+
+        <div class="mode-panel" id="mode-manual" role="tabpanel">
+          <p class="hint">Wähle zuerst die Anzahl der Mengen und markiere dann rechts die gewünschten Bereiche.</p>
+          <label class="label" for="manualSetCount">Anzahl Mengen</label>
+          <select id="manualSetCount" class="select">
+            <option value="2">2 Mengen (A,B)</option>
+            <option value="3" selected>3 Mengen (A,B,C)</option>
+            <option value="4">4 Mengen (A,B,C,D)</option>
+            <option value="5">5 Mengen (A,B,C,D,E)</option>
+          </select>
+          <div class="meta-row">
+            <span class="chip" id="manualCount">Ausgewählte Bereiche: 0</span>
+          </div>
+
+          <label class="label" for="manualTerm">Erzeugter Term</label>
+          <textarea id="manualTerm" readonly></textarea>
+
+          <label class="label">Mehrere Lösungen</label>
+          <ol class="solutions" id="manualAlternatives"></ol>
+
+          <label class="label">Schritt-für-Schritt</label>
+          <ol class="steps" id="manualSteps"></ol>
+        </div>
+
+        <div class="mode-panel" id="mode-tasks" role="tabpanel">
+          <p class="hint">Schreibe deine Aufgabe frei (z. B. „mindestens 3 Mengen“, „genau 2“, „zu keiner“, „nur Menge A").</p>
+
+          <div class="task-input-row">
+            <label class="label" for="taskSetCount">Mengenanzahl</label>
+            <select id="taskSetCount" class="select">
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <label class="label" for="taskPrompt">Eigene Aufgaben-Formulierung</label>
+          <textarea id="taskPrompt" spellcheck="false" placeholder="z. B. mindestens 3 Mengen"></textarea>
+          <button id="taskAnalyzeBtn" class="task-btn" type="button">Aufgabe erkennen und Term erzeugen</button>
+          <p id="taskParseInfo" class="hint small"></p>
+
+          <label class="label" for="taskTerm">Aktueller Aufgaben-Term</label>
+          <textarea id="taskTerm" readonly>–</textarea>
+          <p class="hint small">Der erzeugte Term wird automatisch im Diagramm rechts dargestellt.</p>
+        </div>
+      </section>
+
+      <section class="panel diagram-panel">
+        <div class="canvas-wrap active" id="canvas-term-wrap">
+          <canvas id="vennCanvas" width="760" height="540"></canvas>
+        </div>
+        <div class="canvas-wrap" id="canvas-manual-wrap">
+          <canvas id="manualCanvas" width="760" height="540"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
