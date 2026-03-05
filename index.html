@@ -39,60 +39,45 @@
       </button>
     </header>
 
+    <section class="panel quick-term-panel">
+      <div class="quick-term-head">
+        <label for="exprInput" class="label">Mengenterm</label>
+        <button id="infoToggle" class="info-toggle" type="button" aria-label="Hinweise anzeigen" title="Hinweise">i</button>
+      </div>
+
+      <div id="infoPopup" class="info-popup" role="dialog" aria-modal="false" aria-label="Hinweise">
+        <p class="hint">Kurz-Hinweise</p>
+        <p class="hint small">`s -> ∩`, `v -> ∪`, `k -> '`, `d -> -`, `y -> △`</p>
+        <p class="hint small">Großbuchstaben (A,B,C,...) sind Mengen.</p>
+      </div>
+
+      <div class="quick-term-row">
+        <textarea id="exprInput" class="quick-input" spellcheck="false" placeholder="z. B. (A∩B)∪C'"></textarea>
+        <div class="quick-ops" aria-label="Operatoren">
+          <button class="symbol" data-insert="∪">∪</button>
+          <button class="symbol" data-insert="∩">∩</button>
+          <button class="symbol" data-insert="-">-</button>
+          <button class="symbol" data-insert="△">△</button>
+          <button class="symbol" data-insert="'">'</button>
+          <button class="symbol" data-insert="(">(</button>
+          <button class="symbol" data-insert=")">)</button>
+        </div>
+      </div>
+
+      <div class="meta-row quick-meta-row">
+        <span class="chip" id="setCount">Mengen: 0</span>
+        <span class="chip" id="universeInfo">Grundmenge: –</span>
+      </div>
+      <p id="error" class="error"></p>
+    </section>
+
     <main class="app">
       <section class="panel input-panel">
         <h1>Mengenlehre → Venn-Diagramm</h1>
         <p class="subtitle">Wähle oben einen Modus und arbeite interaktiv mit Mengen.</p>
 
         <div class="mode-panel active" id="mode-term" role="tabpanel">
-          <div class="hotkey-box">
-            <div class="hotkey-title">Tastatur-Kürzel</div>
-            <div class="hotkeys">
-              <span class="key-chip">s → ∩</span>
-              <span class="key-chip">v → ∪</span>
-              <span class="key-chip">k → '</span>
-              <span class="key-chip">d → -</span>
-              <span class="key-chip">y → △</span>
-              <span class="key-chip">Großbuchstaben (A, B, S …) = Mengen</span>
-            </div>
-          </div>
-
-          <label for="exprInput" class="label">Mengenterm</label>
-          <textarea id="exprInput" spellcheck="false"></textarea>
-
-          <div class="meta-row">
-            <span class="chip" id="setCount">Mengen: 0</span>
-            <span class="chip" id="universeInfo">Grundmenge: –</span>
-          </div>
-
-          <div class="tabs" role="tablist" aria-label="Symbol-Reiter">
-            <button class="tab-btn active" data-tab="ops" role="tab" aria-selected="true">Operatoren</button>
-            <button class="tab-btn" data-tab="brackets" role="tab" aria-selected="false">Klammern</button>
-            <button class="tab-btn" data-tab="special" role="tab" aria-selected="false">Spezial</button>
-          </div>
-
-          <div class="tab-panels">
-            <div class="tab-panel active" id="tab-ops" role="tabpanel">
-              <button class="symbol" data-insert=" ∪ ">∪ Vereinigung</button>
-              <button class="symbol" data-insert=" ∩ ">∩ Schnittmenge</button>
-              <button class="symbol" data-insert=" - ">- Differenz</button>
-              <button class="symbol" data-insert=" △ ">△ Symmetrische Differenz</button>
-            </div>
-            <div class="tab-panel" id="tab-brackets" role="tabpanel">
-              <button class="symbol" data-insert="(  )">( )</button>
-              <button class="symbol" data-insert="{  }">{ }</button>
-            </div>
-            <div class="tab-panel" id="tab-special" role="tabpanel">
-              <button class="symbol" data-insert="'">' Komplement</button>
-              <button class="symbol" data-insert="M">M (Grundmenge)</button>
-              <button class="symbol" data-insert="A">A</button>
-              <button class="symbol" data-insert="B">B</button>
-              <button class="symbol" data-insert="C">C</button>
-              <button class="symbol" data-insert="S">S</button>
-            </div>
-          </div>
-
-          <p id="error" class="error"></p>
+          <p class="hint">Term-Eingabe und Operatoren sind jetzt direkt oben unter dem Header.</p>
         </div>
 
         <div class="mode-panel" id="mode-manual" role="tabpanel">

@@ -112,6 +112,60 @@ body {
   padding: 16px;
   transition: background-color 0.28s ease, border-color 0.28s ease;
 }
+.quick-term-panel {
+  margin: 10px 16px 0;
+  padding: 12px;
+}
+.quick-term-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.info-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.info-popup {
+  display: none;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel) 92%, var(--accent) 8%);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.info-popup.open {
+  display: block;
+  animation: fadeInUp 0.2s ease;
+}
+.quick-term-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 10px;
+  align-items: start;
+}
+.quick-input {
+  min-height: 86px;
+}
+.quick-ops {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.quick-ops .symbol {
+  text-align: center;
+  padding: 8px 0;
+}
+.quick-meta-row {
+  margin-top: 10px;
+}
 
 .theme-toggle {
   position: relative;
@@ -125,6 +179,7 @@ body {
   display: grid;
   place-items: center;
   overflow: hidden;
+  touch-action: manipulation;
   transition: transform 0.22s ease, border-color 0.28s ease, background-color 0.28s ease;
 }
 
@@ -477,6 +532,7 @@ canvas {
     opacity: 0;
     transform: translateY(-6px);
     transition: max-height 0.28s ease, opacity 0.24s ease, transform 0.24s ease;
+    touch-action: manipulation;
   }
 
   .header-tabs-wrap.open {
@@ -509,10 +565,30 @@ canvas {
     gap: 10px;
   }
 
+  .quick-term-panel {
+    margin: 8px 10px 0;
+    padding: 10px;
+  }
+
+  .quick-term-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .quick-ops {
+    grid-template-columns: repeat(7, minmax(40px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .quick-ops .symbol {
+    min-width: 42px;
+  }
+
   .diagram-panel {
     order: 1;
-    position: sticky;
-    top: 78px;
+    position: relative;
+    top: auto;
     z-index: 10;
     min-height: 40vh;
     max-height: 46vh;

@@ -16,6 +16,8 @@ const taskTermEl = document.getElementById("taskTerm");
 const themeToggle = document.getElementById("themeToggle");
 const menuToggle = document.getElementById("menuToggle");
 const headerTabs = document.getElementById("headerTabs");
+const infoToggle = document.getElementById("infoToggle");
+const infoPopup = document.getElementById("infoPopup");
 
 const vennCanvas = document.getElementById("vennCanvas");
 const vennCtx = vennCanvas.getContext("2d");
@@ -63,6 +65,7 @@ const state = {
 initTheme();
 setupThemeToggle();
 setupMobileMenu();
+setupInfoPopup();
 setupMainTabs();
 setupSymbolTabs();
 setupSymbolButtons();
@@ -96,7 +99,7 @@ function initTheme() {
 }
 
 function setupThemeToggle() {
-  themeToggle.addEventListener("click", () => {
+  bindImmediateAction(themeToggle, () => {
     const current = document.documentElement.getAttribute("data-theme") || "light";
     const next = current === "dark" ? "light" : "dark";
 
@@ -108,6 +111,21 @@ function setupThemeToggle() {
       updateFromTermInput();
       drawManualDiagram();
     });
+  });
+}
+
+function setupInfoPopup() {
+  if (!infoToggle || !infoPopup) return;
+
+  bindImmediateAction(infoToggle, () => {
+    infoPopup.classList.toggle("open");
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (infoToggle.contains(target) || infoPopup.contains(target)) return;
+    infoPopup.classList.remove("open");
   });
 }
 
@@ -123,7 +141,7 @@ function setupMainTabs() {
 function setupMobileMenu() {
   if (!menuToggle || !headerTabs) return;
 
-  menuToggle.addEventListener("click", () => {
+  bindImmediateAction(menuToggle, () => {
     const isOpen = headerTabs.classList.toggle("open");
     menuToggle.classList.toggle("active", isOpen);
     menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
@@ -144,6 +162,30 @@ function setupMobileMenu() {
   });
 
   syncMobileMenuState();
+}
+
+function bindImmediateAction(button, action) {
+  if (!button) return;
+
+  let pointerTriggered = false;
+
+  button.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 && event.pointerType !== "touch") return;
+    event.preventDefault();
+    pointerTriggered = true;
+    action();
+    setTimeout(() => {
+      pointerTriggered = false;
+    }, 260);
+  });
+
+  button.addEventListener("click", (event) => {
+    if (pointerTriggered) {
+      event.preventDefault();
+      return;
+    }
+    action();
+  });
 }
 
 function closeMobileMenu() {
