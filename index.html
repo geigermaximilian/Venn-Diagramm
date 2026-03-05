@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="legal-note">Kein Haftung :)</div>
+
     <header class="app-header">
       <div class="header-left">
         <span class="header-title">Venn-Diagramm</span>
@@ -126,6 +128,10 @@
       </section>
 
       <section class="panel diagram-panel">
+        <div class="layout-tools">
+          <button id="layoutEditToggle" class="tool-btn" type="button">Positionieren</button>
+          <button id="layoutReset" class="tool-btn" type="button">Reset</button>
+        </div>
         <div class="canvas-wrap active" id="canvas-term-wrap">
           <canvas id="vennCanvas" width="760" height="540"></canvas>
         </div>

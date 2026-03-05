@@ -34,6 +34,13 @@ body {
   transition: background-color 0.28s ease, color 0.28s ease;
 }
 
+.legal-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 3px 8px;
+}
+
 .app-header {
   position: sticky;
   top: 0;
@@ -472,6 +479,30 @@ textarea {
   min-height: 540px;
 }
 
+.layout-tools {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+}
+
+.tool-btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.tool-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .canvas-wrap {
   display: none;
   width: 100%;
@@ -599,6 +630,11 @@ canvas {
     min-height: 40vh;
     max-height: 46vh;
     padding: 8px;
+  }
+
+  .layout-tools {
+    top: 8px;
+    left: 8px;
   }
 
   body.mobile-typing .diagram-panel {

@@ -18,6 +18,8 @@ const menuToggle = document.getElementById("menuToggle");
 const headerTabs = document.getElementById("headerTabs");
 const infoToggle = document.getElementById("infoToggle");
 const infoPopup = document.getElementById("infoPopup");
+const layoutEditToggle = document.getElementById("layoutEditToggle");
+const layoutReset = document.getElementById("layoutReset");
 
 const vennCanvas = document.getElementById("vennCanvas");
 const vennCtx = vennCanvas.getContext("2d");
@@ -60,6 +62,14 @@ const state = {
   manualSelected: new Set(),
   manualShapes: [],
   manualBounds: null,
+  termShapes: [],
+  termBounds: null,
+  termSetNames: [],
+  manualSetNames: [],
+  termLayouts: {},
+  manualLayouts: {},
+  layoutEditEnabled: false,
+  dragInfo: null,
 };
 
 initTheme();
@@ -74,6 +84,8 @@ setupKeyboardShortcuts();
 setupManualCanvas();
 setupManualSetCount();
 setupMobileTypingState();
+setupLayoutControls();
+setupDiagramDrag();
 
 exprInput.addEventListener("input", () => {
   normalizeTermField();
@@ -226,6 +238,116 @@ function switchMode(mode) {
   } else {
     updateFromTermInput();
   }
+
+  updateLayoutToolsState();
+}
+
+function setupLayoutControls() {
+  if (!layoutEditToggle || !layoutReset) return;
+
+  bindImmediateAction(layoutEditToggle, () => {
+    state.layoutEditEnabled = !state.layoutEditEnabled;
+    updateLayoutToolsState();
+  });
+
+  bindImmediateAction(layoutReset, () => {
+    if (state.mode === "manual") {
+      const key = getLayoutKey(state.manualSetNames);
+      delete state.manualLayouts[key];
+      drawManualDiagram();
+    } else {
+      const key = getLayoutKey(state.termSetNames);
+      delete state.termLayouts[key];
+      updateFromTermInput();
+    }
+  });
+
+  updateLayoutToolsState();
+}
+
+function updateLayoutToolsState() {
+  if (!layoutEditToggle) return;
+  layoutEditToggle.classList.toggle("active", state.layoutEditEnabled);
+  layoutEditToggle.textContent = state.layoutEditEnabled ? "Fertig" : "Positionieren";
+}
+
+function setupDiagramDrag() {
+  setupDragForCanvas(vennCanvas, "term");
+  setupDragForCanvas(manualCanvas, "manual");
+
+  window.addEventListener("pointerup", () => {
+    state.dragInfo = null;
+  });
+}
+
+function setupDragForCanvas(canvasEl, mode) {
+  canvasEl.addEventListener("pointerdown", (event) => {
+    if (!state.layoutEditEnabled) return;
+    if (mode === "term" && state.mode === "manual") return;
+    if (mode === "manual" && state.mode !== "manual") return;
+
+    const coords = getCanvasCoordinates(event, canvasEl);
+    const shapes = mode === "manual" ? state.manualShapes : state.termShapes;
+    if (!shapes || shapes.length === 0) return;
+
+    let best = null;
+    let bestDist = Infinity;
+    for (const shape of shapes) {
+      const dx = coords.x - shape.cx;
+      const dy = coords.y - shape.cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= shape.r && dist < bestDist) {
+        best = shape;
+        bestDist = dist;
+      }
+    }
+
+    if (!best) return;
+
+    canvasEl.setPointerCapture(event.pointerId);
+    state.dragInfo = {
+      mode,
+      canvas: canvasEl,
+      pointerId: event.pointerId,
+      shapeName: best.name,
+      offsetX: best.cx - coords.x,
+      offsetY: best.cy - coords.y,
+    };
+    event.preventDefault();
+  });
+
+  canvasEl.addEventListener("pointermove", (event) => {
+    const drag = state.dragInfo;
+    if (!drag || drag.mode !== mode || drag.pointerId !== event.pointerId) return;
+
+    const coords = getCanvasCoordinates(event, canvasEl);
+    const shapes = mode === "manual" ? state.manualShapes : state.termShapes;
+    const bounds = mode === "manual" ? state.manualBounds : state.termBounds;
+    const setNames = mode === "manual" ? state.manualSetNames : state.termSetNames;
+    if (!shapes || !bounds || !setNames || setNames.length === 0) return;
+
+    const shape = shapes.find((item) => item.name === drag.shapeName);
+    if (!shape) return;
+
+    const nextCx = clamp(coords.x + drag.offsetX, bounds.x + shape.r, bounds.x + bounds.width - shape.r);
+    const nextCy = clamp(coords.y + drag.offsetY, bounds.y + shape.r, bounds.y + bounds.height - shape.r);
+    shape.cx = nextCx;
+    shape.cy = nextCy;
+
+    saveLayoutPosition(mode, setNames, shape);
+
+    if (mode === "manual") {
+      drawManualDiagram();
+    } else {
+      updateFromTermInput();
+    }
+  });
+
+  canvasEl.addEventListener("pointerup", (event) => {
+    if (state.dragInfo && state.dragInfo.pointerId === event.pointerId) {
+      state.dragInfo = null;
+    }
+  });
 }
 
 function setupSymbolTabs() {
@@ -316,6 +438,10 @@ function setupKeyboardShortcuts() {
 
 function setupManualCanvas() {
   manualCanvas.addEventListener("click", (event) => {
+    if (state.layoutEditEnabled) {
+      return;
+    }
+
     if (!state.manualBounds || state.manualShapes.length === 0) {
       return;
     }
@@ -495,6 +621,10 @@ function drawTermDiagram(ast, setNames, universe) {
   const omitted = setNames.length - renderSets.length;
 
   const shapes = createShapes(renderSets, bounds);
+  applySavedLayout("term", renderSets, shapes, bounds);
+  state.termShapes = shapes;
+  state.termBounds = bounds;
+  state.termSetNames = [...renderSets];
   const step = 3;
 
   for (let x = bounds.x; x < bounds.x + bounds.width; x += step) {
@@ -545,8 +675,10 @@ function drawManualDiagram() {
 
   const setNames = getSetNames(state.manualSetCount);
   const shapes = createShapes(setNames, bounds);
+  applySavedLayout("manual", setNames, shapes, bounds);
   state.manualShapes = shapes;
   state.manualBounds = bounds;
+  state.manualSetNames = [...setNames];
 
   const step = 3;
   for (let x = bounds.x; x < bounds.x + bounds.width; x += step) {
@@ -1015,6 +1147,37 @@ function createShapes(setNames, bounds) {
 
 function getSetNames(count) {
   return Array.from({ length: count }, (_, index) => String.fromCharCode(65 + index));
+}
+
+function getLayoutKey(setNames) {
+  return setNames.join("|");
+}
+
+function applySavedLayout(mode, setNames, shapes, bounds) {
+  const store = mode === "manual" ? state.manualLayouts : state.termLayouts;
+  const key = getLayoutKey(setNames);
+  const positions = store[key];
+  if (!positions) return;
+
+  for (const shape of shapes) {
+    const saved = positions[shape.name];
+    if (!saved) continue;
+    shape.cx = clamp(saved.cx, bounds.x + shape.r, bounds.x + bounds.width - shape.r);
+    shape.cy = clamp(saved.cy, bounds.y + shape.r, bounds.y + bounds.height - shape.r);
+  }
+}
+
+function saveLayoutPosition(mode, setNames, shape) {
+  const store = mode === "manual" ? state.manualLayouts : state.termLayouts;
+  const key = getLayoutKey(setNames);
+  if (!store[key]) {
+    store[key] = {};
+  }
+  store[key][shape.name] = { cx: shape.cx, cy: shape.cy };
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }
 
 function analyzeTaskPrompt() {
