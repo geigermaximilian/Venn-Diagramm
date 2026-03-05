@@ -73,6 +73,7 @@ setupTaskInput();
 setupKeyboardShortcuts();
 setupManualCanvas();
 setupManualSetCount();
+setupMobileTypingState();
 
 exprInput.addEventListener("input", () => {
   normalizeTermField();
@@ -269,6 +270,31 @@ function setupManualSetCount() {
     state.manualSelected.clear();
     drawManualDiagram();
     updateManualOutputs();
+  });
+}
+
+function setupMobileTypingState() {
+  const setTypingState = (isTyping) => {
+    if (window.innerWidth > 980) {
+      document.body.classList.remove("mobile-typing");
+      return;
+    }
+
+    document.body.classList.toggle("mobile-typing", isTyping);
+  };
+
+  exprInput.addEventListener("focus", () => {
+    setTypingState(true);
+  });
+
+  exprInput.addEventListener("blur", () => {
+    setTimeout(() => setTypingState(false), 120);
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 980) {
+      document.body.classList.remove("mobile-typing");
+    }
   });
 }
 

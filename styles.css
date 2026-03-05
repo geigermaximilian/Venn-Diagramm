@@ -98,7 +98,7 @@ body {
 
 .app {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 450px 1fr;
   gap: 16px;
   min-height: calc(100vh - 68px);
   padding: 16px;
@@ -147,21 +147,22 @@ body {
 }
 .quick-term-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
+  grid-template-columns: minmax(0, 1fr) 176px;
   gap: 10px;
   align-items: start;
 }
 .quick-input {
-  min-height: 86px;
+  min-height: 132px;
 }
 .quick-ops {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 .quick-ops .symbol {
   text-align: center;
-  padding: 8px 0;
+  min-height: 40px;
+  padding: 0;
 }
 .quick-meta-row {
   margin-top: 10px;
@@ -600,10 +601,27 @@ canvas {
     padding: 8px;
   }
 
+  body.mobile-typing .diagram-panel {
+    position: sticky;
+    top: 72px;
+    z-index: 18;
+    min-height: 30vh;
+    max-height: 34vh;
+  }
+
+  body.mobile-typing .input-panel {
+    max-height: 56vh;
+  }
+
   .input-panel {
     order: 2;
     max-height: 48vh;
     overflow: auto;
+  }
+
+  .input-panel > h1,
+  .input-panel > .subtitle {
+    display: none;
   }
 
   .canvas-wrap {
@@ -614,6 +632,10 @@ canvas {
     max-height: calc(48vh - 26px);
     width: 100%;
     height: auto;
+  }
+
+  body.mobile-typing canvas {
+    max-height: calc(34vh - 20px);
   }
 
   .panel {
