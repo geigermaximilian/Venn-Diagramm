@@ -670,6 +670,15 @@ canvas {
     padding: 8px;
   }
 
+  body.layout-editing {
+    overscroll-behavior: none;
+  }
+
+  body.layout-editing .diagram-panel,
+  body.layout-editing .diagram-panel canvas {
+    touch-action: none;
+  }
+
   .layout-tools {
     top: 8px;
     left: 8px;

@@ -273,6 +273,8 @@ function updateLayoutToolsState() {
   if (!layoutEditToggle) return;
   layoutEditToggle.classList.toggle("active", state.layoutEditEnabled);
   layoutEditToggle.textContent = state.layoutEditEnabled ? "Fertig" : "Positionieren";
+
+  document.body.classList.toggle("layout-editing", state.layoutEditEnabled);
 }
 
 function setupDiagramDrag() {
@@ -324,6 +326,7 @@ function setupDragForCanvas(canvasEl, mode) {
   canvasEl.addEventListener("pointermove", (event) => {
     const drag = state.dragInfo;
     if (!drag || drag.mode !== mode || drag.pointerId !== event.pointerId) return;
+    event.preventDefault();
 
     const coords = getCanvasCoordinates(event, canvasEl);
     const shapes = mode === "manual" ? state.manualShapes : state.termShapes;
