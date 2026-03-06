@@ -2,6 +2,7 @@ const exprInput = document.getElementById("exprInput");
 const errorBox = document.getElementById("error");
 const setCountEl = document.getElementById("setCount");
 const universeInfoEl = document.getElementById("universeInfo");
+const lockUniverseDetectEl = document.getElementById("lockUniverseDetect");
 const manualSetCountEl = document.getElementById("manualSetCount");
 const manualCountEl = document.getElementById("manualCount");
 const manualTermEl = document.getElementById("manualTerm");
@@ -86,6 +87,7 @@ setupTaskInput();
 setupKeyboardShortcuts();
 setupManualCanvas();
 setupManualSetCount();
+setupUniverseDetectionToggle();
 setupMobileTypingState();
 setupLayoutControls();
 setupDiagramDrag();
@@ -407,6 +409,13 @@ function setupManualSetCount() {
   });
 }
 
+function setupUniverseDetectionToggle() {
+  if (!lockUniverseDetectEl) return;
+  lockUniverseDetectEl.addEventListener("change", () => {
+    updateFromTermInput();
+  });
+}
+
 function setupMobileTypingState() {
   const setTypingState = (isTyping) => {
     if (window.innerWidth > 980) {
@@ -534,11 +543,16 @@ function updateFromTermInput() {
     parser.expect("EOF");
 
     const allSetNames = Array.from(collectSets(ast)).sort();
-    const universe = detectUniverse(ast, allSetNames);
+    const shouldBlockUniverseDetect = Boolean(lockUniverseDetectEl?.checked);
+    const universe = shouldBlockUniverseDetect ? null : detectUniverse(ast, allSetNames);
     const visibleSets = allSetNames.filter((name) => name !== universe);
 
     setCountEl.textContent = `Mengen: ${visibleSets.length}`;
-    universeInfoEl.textContent = universe ? `Grundmenge: ${universe}` : "Grundmenge: keine";
+    if (shouldBlockUniverseDetect) {
+      universeInfoEl.textContent = "Grundmenge: blockiert";
+    } else {
+      universeInfoEl.textContent = universe ? `Grundmenge: ${universe}` : "Grundmenge: keine";
+    }
 
     drawTermDiagram(ast, visibleSets, universe);
     setErrorOverlayVisible(false);
